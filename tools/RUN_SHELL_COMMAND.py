@@ -2,7 +2,7 @@ import subprocess
 import json
 import time
 import threading
-from ytmusicapi import YTMusic
+
 
 def RUN_SHELL_COMMAND(command):
     """

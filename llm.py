@@ -22,8 +22,8 @@ class Model:
         max_tokens=1024,
         top_p=1,
         stream=False,
-        #response_format={"type": "json_object"},
+        response_format={"type": "json_object"},
         stop=None,
         )
-        result = completion.choices[0].message
+        result = completion.choices[0].message.content
         return result
