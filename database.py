@@ -1,4 +1,27 @@
 import chromadb
+import psycopg2
+
+with psycopg2.connect(
+    dbname="samanthadb",
+    host="localhost",
+    user="shashimahe",
+    password="Shashi@24",
+    port="5432"
+) as conn:
+
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """CREATE TABLE nodes (
+        id SERIAL PRIMARY KEY,
+        type VARCHAR(100),
+        label VARCHAR(1000)
+        properties JSONB
+        )
+        """
+    )
+
+    cursor.close()
 
 class Memory:
     def __init__(self, path, db_name):
@@ -20,4 +43,5 @@ class Memory:
             include=['documents', 'distances', 'metadatas']
         )
         return results['documents']
-        
+
+

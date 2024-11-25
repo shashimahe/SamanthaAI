@@ -5,9 +5,6 @@ from datetime import datetime
 from llm import Model
 import json, inspect
 
-API_KEY = "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"
-client = Groq(api_key=API_KEY)
-
 def load_prompt(file):
     with open(file, "r") as f:
         content = f.read()
