@@ -19,7 +19,7 @@ def SEARCH_WEB(query, search_type):
     with DDGS() as search:
         match search_type:
             case "texts":
-                return search.text(query, max_results=2)
+                return search.text(query, region='in-en', max_results=5)
             case "answers":
                 return search.answers(query)
             case "images":
@@ -27,7 +27,10 @@ def SEARCH_WEB(query, search_type):
             case "videos":
                 return search.videos(query, region='wt-wt', safesearch='off', timelimit='y', max_results=2)
             case "news":
-                return search.news(query, region='wt-wt', safesearch='off', timelimit='d', max_results=2)
+                return search.news(query, region='in-en', safesearch='off', timelimit='d', max_results=10)
             case "maps":
-                return search.maps(query, place="Varthur", max_results=2)
+                return search.maps(query, place="Varthur, Bangalore", max_results=2)
 
+
+a = SEARCH_WEB("Who won last T20 cricket World cup?", "news")
+pprint.pprint(a)

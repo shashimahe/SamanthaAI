@@ -1,5 +1,5 @@
 import subprocess
-import json
+import json, pprint
 from duckduckgo_search import DDGS
 
 def RUN_SHELL_COMMAND(command):
@@ -50,3 +50,7 @@ def SEARCH_WEB(query, search_type):
                 return search.news(query, region='wt-wt', safesearch='off', timelimit='d', max_results=2)
             case "maps":
                 return search.maps(query, place="Varthur", max_results=2)
+
+
+a = SEARCH_WEB("current president of USA", "")
+pprint.pprint(a)
