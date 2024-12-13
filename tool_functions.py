@@ -4,10 +4,7 @@ from duckduckgo_search import DDGS
 
 def RUN_SHELL_COMMAND(command):
     """
-    Tool Name: RUN_SHELL_COMMAND
-    - Use this tool to executes shell commands and retrieves the output or error.
-    Arguments: 
-    - command (str): Command to run in yhe Bash Shell
+    Use this tool to executes shell commands and retrieves the output or error.
     """
     try:
         print(f">>> Executing command: {command}")
@@ -23,18 +20,7 @@ def RUN_SHELL_COMMAND(command):
 
 def SEARCH_WEB(query, search_type):
     """
-    Tool Name: SEARCH_WEB
-    - Use this tool to Search for information from web or google. Information such as images, videos, news, maps, recent facts etc.
-    - This tool fetches information from the web and return results in JSON format
-    Arguments:
-    - query (str): The search term or phrase to look up.
-    - search_type (str): The type of search to perform. Options include:
-        - "texts": For general text-based search results.
-        - "answers": For direct answers to queries.
-        - "images": For image search results.
-        - "videos": For video search results.
-        - "news": For news articles.
-        - "maps": For location-based search results.
+    Use this tool to Search for information from web or google. Information such as images, videos, news, maps, recent facts etc.
     """
     with DDGS() as search:
         match search_type:
