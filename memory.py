@@ -17,5 +17,5 @@ class shortTermMemory:
             user = record["user"]
             ai_response = record["ai"]
             markdown_output += f"{user['username']}: {user['query']}\n"
-            markdown_output += f"AI : {ai_response}\n\n"
+            markdown_output += f"AI: {ai_response}\n\n"
         return markdown_output
