@@ -1,0 +1,78 @@
+[
+    {
+        "command": "termux-battery-status",
+        "usage": "Displays information about the device's battery status, including percentage, health, and temperature."
+    },
+    {
+        "command": "termux-camera-info",
+        "usage": "Retrieves information about the device's cameras, such as resolution and facing direction."
+    },
+    {
+        "command": "termux-camera-photo",
+        "usage": "Captures a photo using the device's camera. Usage: termux-camera-photo -c <camera_id> <file_path>"
+    },
+    {
+        "command": "termux-clipboard-get",
+        "usage": "Gets the current content of the device's clipboard."
+    },
+    {
+        "command": "termux-clipboard-set",
+        "usage": "Sets the content of the device's clipboard. Usage: termux-clipboard-set <text>"
+    },
+    {
+        "command": "termux-contact-list",
+        "usage": "Lists all contacts stored on the device."
+    },
+    {
+        "command": "termux-dialog",
+        "usage": "Displays a dialog box for user input. Usage: termux-dialog -t <title> -i <input_type>"
+    },
+    {
+        "command": "termux-download",
+        "usage": "Downloads a file from a URL. Usage: termux-download <url>"
+    },
+    {
+        "command": "termux-media-player",
+        "usage": "Controls media playback on the device. Usage: termux-media-player <play/pause/stop> <file_path>"
+    },
+    {
+        "command": "termux-notification",
+        "usage": "Creates a notification on the device. Usage: termux-notification -t <title> -c <content>"
+    },
+    {
+        "command": "termux-sensor",
+        "usage": "Displays information from device sensors. Usage: termux-sensor -l to list available sensors."
+    },
+    {
+        "command": "termux-sms-inbox",
+        "usage": "Displays the content of the SMS inbox."
+    },
+    {
+        "command": "termux-sms-send",
+        "usage": "Sends an SMS message. Usage: termux-sms-send -n <phone_number> '<message>'"
+    },
+    {
+        "command": "termux-telephony-call",
+        "usage": "Initiates a phone call. Usage: termux-telephony-call <phone_number>"
+    },
+    {
+        "command": "termux-toast",
+        "usage": "Displays a toast message on the device. Usage: termux-toast <message>"
+    },
+    {
+        "command": "termux-vibrate",
+        "usage": "Makes the device vibrate. Usage: termux-vibrate -d <duration_in_ms>"
+    },
+    {
+        "command": "termux-wifi-connectioninfo",
+        "usage": "Displays information about the current Wi-Fi connection."
+    },
+    {
+        "command": "termux-wifi-scaninfo",
+        "usage": "Lists available Wi-Fi networks."
+    },
+    {
+        "command": "termux-location",
+        "usage": "Gets the device's current location. Usage: termux-location -p <provider> -r <request_type>"
+    }
+]

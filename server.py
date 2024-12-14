@@ -1,9 +1,11 @@
-from llm import Agent
+from llm import *
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib.parse
 
-agent = Agent("persona")
+instructions = load_prompt("persona")
+
+agent = Agent(instructions)
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 

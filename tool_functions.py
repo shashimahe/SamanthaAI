@@ -2,11 +2,11 @@ import subprocess
 import json
 from duckduckgo_search import DDGS
 
-def RUN_SHELL_COMMAND(command):
+def ubuntu_terminal(command):
     """
-    Tool Name: RUN_SHELL_COMMAND
+    Tool Name: ubuntu_terminal
     Description: Executes a shell command in a terminal and returns the output or error.
-    It can be used to run basic linux bash shell commands to handle the actions
+    It can be used to run basic linux bash shell commands to handle basic actions 
     Args:
         command (str): The shell command to execute.
     """
@@ -20,10 +20,23 @@ def RUN_SHELL_COMMAND(command):
     except Exception as e:
         return json.dumps({"status": "error", "exception": str(e)})
 
-
-def SEARCH_WEB(query, search_type):
+def termux_terminal(command):
     """
-    Tool Name: SEARCH_WEB
+    Tool Name: termux_terminal
+    Description: Execute a shell command in Termux Terminal.
+    It can be used to run termux api commands
+    Eg:
+    "termux-torch on" - To turn on or off the smartphone torch.
+    "termux-sms-list -n 5 - To read sms
+    Args:
+        command (str): The shell command to execute.
+    """
+    cmd = f"ssh -p 8022 u0_a294@192.168.93.55 '{command}'"
+    return ubuntu_terminal(cmd)
+
+def search_web(query, search_type):
+    """
+    Tool Name: search_web
     Description: Performs a web search using DuckDuckGo and returns relevant results.
     Args:
         query (str): The search term or keywords.
