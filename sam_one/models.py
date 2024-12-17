@@ -1,17 +1,9 @@
 from pydantic import BaseModel, Field
-from typing import Optional, Literal
+from typing import Optional, Literal, Dict, Any
 from datetime import datetime
 
-def current_timestamp():
-    return datetime.now().strftime("%d-%m-%Y %I:%M %p")
-
-class userRequestModel(BaseModel):
-    query: str = Field(description="Request from the User")
-    username: str = Field(default="Shashi", description="Name of the User")
-    timestamp: str = Field(default_factory=current_timestamp)
-
 class conversationModel(BaseModel):
-    user: userRequestModel = Field(description="Request from the User")
+    query: str = Field(description="Request from the User")
     ai: str = Field(description="Response from the AI")
 
 class LLMPersonality(BaseModel):
@@ -25,4 +17,3 @@ class LLMPersonality(BaseModel):
     traits: list[str] = Field(default=["Attentive", "Caring"], description="Specific traits that describe the assistant.")
     tone: Literal["Formal", "Casual", "Professional"] = Field(default="Casual", description="Tone used in communication.")
     response_length: Literal["Short", "Medium", "Detailed"] = Field(default="Short", description="Preferred response length.")
-

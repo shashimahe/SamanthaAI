@@ -1,44 +1,44 @@
 import psycopg2
 
+# Run this command in WSL to port forward 
+# ssh -L 5432:localhost:5432 -p 8022 u0_a294@192.168.168.188
+
 # Database connection details
 DB_CONFIG = {
-    "dbname": "samanthadb",
+    "dbname": "SamanthaDB",
     "user": "shashimahe",
     "password": "Shashi@24",
     "host": "localhost",
     "port": 5432
 }
 
-# SQL to create a table
-CREATE_TABLE_SQL = """
-CREATE TABLE relationships (
-    id SERIAL PRIMARY KEY,
-    source_node_id INT REFERENCES nodes(id),
-    target_node_id INT REFERENCES nodes(id),
-    type VARCHAR(100) NOT NULL,
-    properties JSONB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-"""
-INSERT_NODES = """
-INSERT INTO nodes (type, label, properties)
-VALUES ("user", "Shashi", );
-"""
-try:
-    # Connect to PostgreSQL
-    conn = psycopg2.connect(**DB_CONFIG)
-    cursor = conn.cursor()
+def UpdateDB(query):
+    try:
+        # Connect to PostgreSQL
+        conn = psycopg2.connect(**DB_CONFIG)
+        cursor = conn.cursor()
 
-    # Execute the SQL command
-    cursor.execute(INSERT_NODES)
-    conn.commit()  # Save changes
+        # Execute the SQL command
+        cursor.execute(query)
+        
+        conn.commit()  # Save changes
 
-    print("Table created successfully!")
-except psycopg2.Error as e:
-    print(f"Error: {e}")
-finally:
-    # Close the connection
-    if cursor:
-        cursor.close()
-    if conn:
-        conn.close()
+        return "Successfully!"
+    except psycopg2.Error as e:
+        return f"Error: {e}"
+
+def SearchDB(query):
+    try:
+        # Connect to PostgreSQL
+        conn = psycopg2.connect(**DB_CONFIG)
+        cursor = conn.cursor()
+        # Execute the SQL command
+        cursor.execute(query)
+
+        rows = cursor.fetchall()
+        output = ""
+        for row in rows:
+            output += f"{row}\n"
+        return output
+    except psycopg2.Error as e:
+        print(f"Error: {e}")

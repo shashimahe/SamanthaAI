@@ -1,7 +1,4 @@
-import json
 import chromadb
-
-from models import *
 from basic_functions import *
 
 class shortTermMemory:

@@ -2,7 +2,7 @@ from datetime import datetime
 import inspect
 import json
 
-import my_tool_functions
+from groq import Groq
 
 def current_timestamp():
     return datetime.now().strftime("%d-%m-%Y %I:%M %p")
@@ -68,9 +68,42 @@ def invoke_tool(tool_names, response):
             try:
                 print(f"Running..{tool_name}({arguments})")
                 tool_result = function(**arguments)
-                return json_to_markdown(tool_result)
+                return {"success": True, "output": json_to_markdown(tool_result)}
             except Exception as e:
                 return {"success": False, "error": str(e)}
         else:
             return {"success": False, "error": f"Tool '{tool_name}' not found"}
     return {"success": False, "error": "No tool specified"}
+
+class Model:
+    # Intiate model with response format, Use 'json' for JSON output
+    def __init__(self, response_format=None):
+        API_KEY = "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"
+        self.client = Groq(api_key=API_KEY)
+        if response_format == "json":
+            self.response_format = {"type": "json_object"}
+        else:
+            self.response_format = response_format
+
+    def Complete(self, system, user):
+        completion = self.client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {
+                "role": "system",
+                "content": system
+            },
+            {
+                "role": "user",
+                "content": user
+            },
+        ],
+        temperature=1,
+        max_tokens=2048,
+        top_p=1,
+        stream=False,
+        response_format=self.response_format,
+        stop=None,
+        )
+        result = completion.choices[0].message.content
+        return result
