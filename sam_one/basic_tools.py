@@ -36,7 +36,7 @@ def play_music(audio_name):
     Args:
         audio_name (str): Name of the song, music or any audio you want to play. Default is Kannada Latest Hits
     """
-    print(f">>> Searching {audio_name}....")
+    print(f"Searching {audio_name}....")
     yt = YTMusic()
     media_search = yt.search(query=audio_name, filter="songs", limit=2)
     data = media_search[:1][0]
@@ -45,10 +45,9 @@ def play_music(audio_name):
     album = data.get('album', {})
     artists = [artist.get('name', 'Unknown Artist') for artist in data.get('artists', [])]
     video_id = data.get('videoId', 'No Duration')
-    url = f"https://music.youtube.com/watch?v={video_id}"
-    command = f'termux-open {url}'            
-    terminal_output = terminal(command)
-    if terminal_output.get("result") == "error":
+    url = f"https://music.youtube.com/watch?v={video_id}"           
+    openlink_output = open_link(url)
+    if openlink_output.get("result") == "error":
         return {"result": "error", "output": "Error while playing music"}
     return {"result": "success", "output": f"Playing {audio_name} from {album} by {artists}"}
     
@@ -59,7 +58,7 @@ def open_link(link):
     Args:
         link (str): URL or Link to open
     """
-    command = f'termux-open {link}'
+    command = f'wslview {link}'
     terminal_output = terminal(command)
     if terminal_output.get("result") == "error":
         return {"result": "error", "output": "Error while opening link"}

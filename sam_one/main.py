@@ -7,12 +7,6 @@ import json
 # Create a Short Term Memory
 short_memory = shortTermMemory()
 
-# Last 5 conversation history
-short_memory_prompt = f"""
-Previous Conversation:
-{short_memory.load(5)}
-"""
-
 # Retrieve function names and descriptions
 tool_names = get_function_names(basic_tools)
 tool_descriptions = get_function_descriptions(basic_tools)
@@ -60,48 +54,56 @@ persona_prompt = f"""
 json_model = Model("json")
 text_model = Model()
 
-def toolCallAgent(query):
+def firstAgent(query):
+    short_memory_prompt = short_memory.load(5)
     system = f"""
+    Previous Conversations:
     {short_memory_prompt}\n
     {context_prompt}\n
     {tools_prompt}\n
     {toolcall_instructions}\n
     """
-    toolcall = json.loads(json_model.Complete(system, query))
-    return toolcall
+    output = json.loads(json_model.Complete(system, query))
+    return output
 
 
 def toolResponseAgent(query, toolcall):
+    short_memory_prompt = short_memory.load(3)
     if toolcall.get("tool_name"):
       tool_output = invoke_tool(tool_names, toolcall)
       query = f"""
+      Previous Conversations:
+      {short_memory_prompt}\n
       For the following
       Query: "{query}"
       Invoked Tool: {toolcall}
       Tool Output
       {tool_output}
       """ + """
-      Understand and Analyse the Query and Tool Output after invoking the invoked tool
-      Construct a short response message based on observation made from Query & Tool output.
+      1. Understand and Analyse the Query and Tool Output after invoking the invoked tool
+      2. Answer the user query in a short response message based on observation made from Query & Tool output.
+      3. Response the output in following JSON format
+      {"response_message": "Final Response to the user"}
+      NOTE: OUTPUT ONLY IN JSON FORMAT
       """
-      tool_response = text_model.Complete("", query)
-      return tool_response
+      tool_response = json.loads(json_model.Complete("", query))
+      return tool_response.get("response_message")
     else:
       return "Failed to get Tool Response"
 
 def mainAgent(query):
-    first_response = toolCallAgent(query)
-    print(first_response)
+    first_response = firstAgent(query)
+    #print(first_response)
     if first_response.get("tool_name"):
         tool_response = toolResponseAgent(query, first_response)
-        print(tool_response)
-        mem = {"Query": query, "Action": first_response, "Observation": tool_response}
+        #print(tool_response)
+        mem = {"Query": query, "Action": first_response, "AI Response": tool_response}
         short_memory.update(mem)
-        return short_memory.load(5)
+        return tool_response
     else:
-        mem = {"Query": query, "Action": None, "Observation": None, "AI Response": first_response.get("response_message")}
+        mem = {"Query": query, "Action": None, "AI Response": first_response.get("response_message")}
         short_memory.update(mem)
-        return short_memory.load(5)
+        return first_response.get("response_message")
 
 if __name__ == "__main__":
     while True:
