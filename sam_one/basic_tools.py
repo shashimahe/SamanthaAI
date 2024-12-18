@@ -1,10 +1,10 @@
 import subprocess
-import json, threading, time
-from duckduckgo_search import DDGS
+import json, time
 from ytmusicapi import YTMusic
 
 from basic_functions import *
 
+# Tool output should follow this json format {"tool_result": "output"}
 
 def terminal(command):
     """
@@ -15,19 +15,19 @@ def terminal(command):
     It can also be used to run termux api commands
     Some example termux api commands are
     "termux-torch on" - To turn on or off the smartphone torch.
-    "termux-sms-list -n 5" - List last 5 SMS
+    "termux-sms-list" - List SMS
     Args:
         command (str): The shell command to execute.
     """
     try:
-        print(f">>> Executing command: {command}")
+        print(f"Executing command: {command}")
         result = subprocess.run(command, shell=True, text=True, capture_output=True)
         if result.returncode == 0:
-            return json.dumps({"status": "success", "output": result.stdout.strip()})
+            return {"tool_result": result.stdout.strip()}
         else:
-            return json.dumps({"status": "error", "error": result.stderr.strip()})
+            return {"tool_result": result.stderr.strip()}
     except Exception as e:
-        return json.dumps({"status": "error", "exception": str(e)})
+        return {"tool_result": str(e)}
 
 
 def play_music(audio_name):
@@ -39,27 +39,19 @@ def play_music(audio_name):
     print(f">>> Searching {audio_name}....")
     yt = YTMusic()
     media_search = yt.search(query=audio_name, filter="songs", limit=2)
-    data = media_search[:1]
-    output = {}
-    # Extracting useful details such as audio title, album, artists and audio url
-    for item in data:
-        output["Audio Name"] = item.get('title', 'No Title')
-        output["Album"] = item.get('album', {}).get('name', 'No Album Name')
-        output["Artists"] = [artist.get('name', 'Unknown Artist') for artist in item.get('artists', [])]
-        video_id = item.get('videoId', 'No Duration')
-        url = f"https://music.youtube.com/watch?v={video_id}"
-        output["link"] = url
+    data = media_search[:1][0]
+  
+    audio_name = data.get('title', 'No Title')
+    album = data.get('album', {})
+    artists = [artist.get('name', 'Unknown Artist') for artist in data.get('artists', [])]
+    video_id = data.get('videoId', 'No Duration')
+    url = f"https://music.youtube.com/watch?v={video_id}"
+    command = f'termux-open {url}'            
+    terminal_output = terminal(command)
+    if terminal_output.get("tool_result") == "error":
+        return {"tool_result": "Error while playing music"}
+    return {"tool_result": f"Playing {audio_name} from {album} by {artists}"}
     
-    audio_link = url
-
-    command = f'termux-open {audio_link}'            
-    open = terminal(command)
-    if open.get("success") == True:
-        output["Audio Status"] = "Playing"
-        return output
-    else:
-        return {"Audio Status": "Failed to play"}
-
 def open_link(link):
     """
     This tool can be used to open links or any url in Android Browser
@@ -68,12 +60,8 @@ def open_link(link):
         link (str): URL or Link to open
     """
     command = f'termux-open {link}'
-    open = terminal(command)
-    if open.get("success") == True:
-        return {"Open Link Status": "Opened"}
-    else:
-        return {"Open Link Status": "Failed"}
-
-
-
-
+    terminal_output = terminal(command)
+    if terminal_output.get("tool_result") == "error":
+        return {"tool_result": "Error while opening link"}
+    return {"tool_result": "Provided link Opened Successfully"}
+    

@@ -1,11 +1,7 @@
-from llm import *
-
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib.parse
 
-instructions = load_prompt("persona")
-
-agent = Agent(instructions)
+from main import mainAgent
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
@@ -16,7 +12,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         # Assuming the variable is passed as 'variable_name' in the URL query
         variable = query_components.get('variable_name', [''])[0]
         # Process the variable (for example, just reversing the string)
-        processed_variable = agent.chat(variable)
+        processed_variable = mainAgent(variable)
         
         # Send a response
         self.send_response(200)

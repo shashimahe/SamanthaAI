@@ -3,6 +3,9 @@ import basic_tools
 from memory import *
 import json
 
+# Create a Short Term Memory
+short_memory = shortTermMemory()
+
 # Retrieve function names and descriptions
 tool_names = get_function_names(basic_tools)
 tool_descriptions = get_function_descriptions(basic_tools)
@@ -19,7 +22,7 @@ Date & Time: {current_timestamp()}
 Username: Shashi
 """
 
-first_instructions = """
+toolcall_instructions = """
 ## Instructions:
 Understand the User Request and choose any one case to solve the problem
 - Case 1. If a tool is required to complete the request, determine the appropriate tool and arguments from the available tools and specify the tool name and required arguments in the below JSON format.
@@ -37,57 +40,52 @@ NOTE: USE TOOLS ONLY IF NECESSARY
 RESPONSE THE OUTPUT ONLY IN JSON FORMAT
 """
 
-model = Model("json")
-short_memory = shortTermMemory()
+json_model = Model("json")
+text_model = Model()
 
-def firstAgent(query):
+def toolCallAgent(query):
     system = f"""
-    Previous Conversations:\n
-    {short_memory.load(5)}\n
     {tools_prompt}\n
     {context_prompt}\n
-    {first_instructions}
+    {toolcall_instructions}
     """
-    first_response = json.loads(model.Complete(system, query))
-    return first_response
+    toolcall = json.loads(json_model.Complete(system, query))
+    return toolcall
 
-def secondAgent(action):
-    if action.get("tool_name"):
-      tool_result = invoke_tool(tool_names, action)
-      if tool_result.get("success"):
+
+def toolResponseAgent(query, toolcall):
+    if toolcall.get("tool_name"):
+      tool_result = invoke_tool(tool_names, toolcall)
+      if tool_result.get("tool_result"):
         tool_output = tool_result.get("output")
         query = f"""
-        Previous Conversations:\n
-        {short_memory.load(5)}\n
-        {tools_prompt}\n
-        {context_prompt}\n
-        For the following Query: "{query}"
-        The tool output is as follows:
+        For the following
+        Query: "{query}"
+        Invoked Tool: {toolcall}
+        Tool Output
         {tool_output}
-        Use the above tool output as context and answer the query by constructing your response in final_message json format.
-        Json Format: {"response": "Response Message to the user"}
+        """ + """\n
+        Understand and Analyse the Query and Tool Output after invoking the invoked tool
+        Construct a short response message based on observation made from Query & Tool output.
         """
-        second_response = model.Complete("", query)
-        return second_response
+        tool_response = text_model.Complete("", query)
+        return tool_response
       else:
-        return "error"
+        return "Failed to get Tool Response"
     else:
-      return "error"
+      return "No Tool found to invoke"
     
 def mainAgent(query):
-    first = firstAgent(query)
-    if first.get("response"):
-       mem = {"query": query, "action": "None", "response": first.get("response")}
-       short_memory.update(mem)
-       return first.get("response")
+    tool_call = toolCallAgent(query)
+    if tool_call.get("tool_name"):
+        tool_response = toolResponseAgent(query, tool_call)
+        mem = {"Query": query, "Tool Response": tool_response}
+        short_memory.update(mem)
+        return short_memory.load(5)
     else:
-       second = secondAgent(first)
-       if second.get("response"):
-          mem = {"query": query, "action": first, "response": second.get("response")}
-          short_memory.update(mem)
-          return second.get("response")
-       else:
-          return "error"
+        mem = {"Query": query, "Tool Response": tool_call.get("response")}
+        short_memory.update(mem)
+        return short_memory.load(5)
 
 if __name__ == "__main__":
     while True:
