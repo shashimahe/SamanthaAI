@@ -6,7 +6,7 @@ class conversationModel(BaseModel):
     query: str = Field(description="Request from the User")
     ai: str = Field(description="Response from the AI")
 
-class LLMPersonality(BaseModel):
+class assistantPersonality(BaseModel):
     name: str = Field(default="Samantha", description="Name of the personal assistant.")
     age: int = Field(default=25, ge=18, le=100, description="Age of the assistant, must be realistic.")
     gender: Literal["Male", "Female", "Non-binary"] = Field(default="Female", description="Gender of the assistant.")

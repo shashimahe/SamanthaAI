@@ -23,11 +23,11 @@ def terminal(command):
         print(f"Executing command: {command}")
         result = subprocess.run(command, shell=True, text=True, capture_output=True)
         if result.returncode == 0:
-            return {"tool_result": result.stdout.strip()}
+            return {"result": "success", "output": result.stdout.strip()}
         else:
-            return {"tool_result": result.stderr.strip()}
+            return {"result": "error", "output": result.stderr.strip()}
     except Exception as e:
-        return {"tool_result": str(e)}
+        return {"result": "error", "output": str(e)}
 
 
 def play_music(audio_name):
@@ -48,9 +48,9 @@ def play_music(audio_name):
     url = f"https://music.youtube.com/watch?v={video_id}"
     command = f'termux-open {url}'            
     terminal_output = terminal(command)
-    if terminal_output.get("tool_result") == "error":
-        return {"tool_result": "Error while playing music"}
-    return {"tool_result": f"Playing {audio_name} from {album} by {artists}"}
+    if terminal_output.get("result") == "error":
+        return {"result": "error", "output": "Error while playing music"}
+    return {"result": "success", "output": f"Playing {audio_name} from {album} by {artists}"}
     
 def open_link(link):
     """
@@ -61,7 +61,7 @@ def open_link(link):
     """
     command = f'termux-open {link}'
     terminal_output = terminal(command)
-    if terminal_output.get("tool_result") == "error":
-        return {"tool_result": "Error while opening link"}
-    return {"tool_result": "Provided link Opened Successfully"}
+    if terminal_output.get("result") == "error":
+        return {"result": "error", "output": "Error while opening link"}
+    return {"result": "success", "output": "Provided link Opened Successfully"}
     

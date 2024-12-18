@@ -17,8 +17,8 @@ def json_to_markdown(json_data):
     if isinstance(json_data, str):
         try:
             json_data = json.loads(json_data)
-        except json.JSONDecodeError as e:
-            return f"Error decoding JSON: {e}"
+        except:
+            return json_data
 
     def format_dict(data, indent=0):
         markdown = ""
@@ -48,7 +48,7 @@ def json_to_markdown(json_data):
     elif isinstance(json_data, list):
         return format_list(json_data)
     else:
-        return "Unsupported JSON format."
+        return json_data
 
 def get_function_names(module_name):
     """Retrieve a dictionary of all functions in the tool_functions module."""
@@ -68,12 +68,13 @@ def invoke_tool(tool_names, response):
             try:
                 print(f"Running..{tool_name}({arguments})")
                 tool_result = function(**arguments)
-                return {"success": True, "output": json_to_markdown(tool_result)}
+                if tool_result.get("result") == "success":
+                    return json_to_markdown(tool_result.get("output"))
             except Exception as e:
-                return {"success": False, "error": str(e)}
+                return str(e)
         else:
-            return {"success": False, "error": f"Tool '{tool_name}' not found"}
-    return {"success": False, "error": "No tool specified"}
+            return f"Tool '{tool_name}' not found"
+    return "No tool specified"
 
 class Model:
     # Intiate model with response format, Use 'json' for JSON output
